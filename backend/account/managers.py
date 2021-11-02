@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy
 
+
 class UserManager(BaseUserManager):
     def create_user(self, uuid, password, **info):
 

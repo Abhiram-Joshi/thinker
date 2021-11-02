@@ -4,11 +4,11 @@ from django.contrib.auth import get_user_model
 from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication
 
-class JWTAuthentication(BaseAuthentication):
 
+class JWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         User = get_user_model()
-        authorisation_header = request.headers.get('Authorization')
+        authorisation_header = request.headers.get("Authorization")
 
         if not authorisation_header:
             return None
@@ -19,10 +19,10 @@ class JWTAuthentication(BaseAuthentication):
 
         except jwt.ExpiredSignatureError:
             raise exceptions.AuthenticationFailed("Access token has expired")
-        
+
         except IndexError:
             raise exceptions.AuthenticationFailed("Token missing")
-        
+
         user = User.objects.get(uuid=payload["uuid"])
 
         if not user:
