@@ -7,6 +7,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from utilities import response_writer, get_model_fields
+
 from .serializers import RefreshTokenSerializer, UserLoginSerializer
 from .utilities import generate_access_token, generate_refresh_token
 
@@ -29,11 +31,38 @@ class UserLoginAPIView(APIView):
         access_token = generate_access_token(uuid)
         refresh_token = generate_refresh_token(uuid)
 
-        response = {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        }
+        response = response_writer("success", {"access_token": access_token, "refresh_token": refresh_token}, 200, "Created")
 
+        return Response(response, status=status.HTTP_200_OK)
+
+
+class UserAPIView(APIView):
+
+    def patch(self, request):
+        User = get_user_model()
+
+        serializer = UserLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        uuid = request.user.uuid
+
+        if uuid == serializer.validated_data["uuid"]:
+            User.objects.filter(uuid=uuid).update_or_create(serializer.validated_data)
+
+            response = response_writer("success", User.objects.filter(uuid=uuid).values(*get_model_fields(User)), 200, "Updated")
+            return Response(response, status=status.HTTP_200_OK)
+
+        else:
+            response = response_writer("error", None, 401, "Cannot update details of other users")
+            return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+
+
+    def delete(self, request):
+        User = get_user_model()
+
+        print(User.objects.get(uuid=request.user.uuid).delete())
+
+        response = response_writer("success", None, 200, "Deleted")
         return Response(response, status=status.HTTP_200_OK)
 
 
