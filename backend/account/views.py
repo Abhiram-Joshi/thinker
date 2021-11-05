@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from utilities import response_writer, get_model_fields
+from utilities import get_model_fields, response_writer
 
 from .serializers import RefreshTokenSerializer, UserLoginSerializer
 from .utilities import generate_access_token, generate_refresh_token
@@ -30,13 +30,17 @@ class UserLoginAPIView(APIView):
         access_token = generate_access_token(uuid)
         refresh_token = generate_refresh_token(uuid)
 
-        response = response_writer("success", {"access_token": access_token, "refresh_token": refresh_token}, 200, "Created")
+        response = response_writer(
+            "success",
+            {"access_token": access_token, "refresh_token": refresh_token},
+            200,
+            "Created",
+        )
 
         return Response(response, status=status.HTTP_200_OK)
 
 
 class UserAPIView(APIView):
-
     def patch(self, request):
         User = get_user_model()
 
@@ -48,13 +52,19 @@ class UserAPIView(APIView):
         if uuid == serializer.validated_data["uuid"]:
             User.objects.filter(uuid=uuid).update_or_create(serializer.validated_data)
 
-            response = response_writer("success", User.objects.filter(uuid=uuid).values(*get_model_fields(User)), 200, "Updated")
+            response = response_writer(
+                "success",
+                User.objects.filter(uuid=uuid).values(*get_model_fields(User)),
+                200,
+                "Updated",
+            )
             return Response(response, status=status.HTTP_200_OK)
 
         else:
-            response = response_writer("error", None, 401, "Cannot update details of other users")
+            response = response_writer(
+                "error", None, 401, "Cannot update details of other users"
+            )
             return Response(response, status=status.HTTP_401_UNAUTHORIZED)
-
 
     def delete(self, request):
         User = get_user_model()

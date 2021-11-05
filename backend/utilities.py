@@ -6,5 +6,10 @@ def response_writer(status: str, data: dict, code: int, message: str) -> dict:
         "message": message,
     }
 
+
 def get_model_fields(model):
-    return [field.name for field in model._meta.fields if field.name not in ["password", "last_login", "is_superuser"]]
+    return [
+        field.name
+        for field in model._meta.fields
+        if field.name not in ["password", "last_login", "is_superuser"]
+    ]
