@@ -2,6 +2,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url("^get_topics", views.TopicAPIView.as_view(), name="get_all_deck_topics"),
-    url("^create", views.DeckAPIView.as_view(), name="create_deck"),
+    url(r"^get_topics", views.TopicAPIView.as_view(), name="get_all_deck_topics"),
+    url(r"^create", views.DeckAPIView.as_view(), name="create_deck"),
+    url(r"^update/(?P<id>[0-9]+)", views.DeckAPIView.as_view(), name="update_deck"),
 ]
