@@ -25,8 +25,7 @@ class UserLoginAPIView(APIView):
         serializer.is_valid(raise_exception=True)
 
         uuid = serializer.validated_data["uuid"]
-
-        User.objects.get_or_create(serializer.validated_data)
+        User.objects.get_or_create(**serializer.validated_data)
 
         access_token = generate_access_token(uuid)
         refresh_token = generate_refresh_token(uuid)
