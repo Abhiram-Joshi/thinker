@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from . import views
 
@@ -8,4 +8,5 @@ urlpatterns = [
     url(r"^update/(?P<id>[0-9]+)", views.DeckAPIView.as_view(), name="update_deck"),
     url(r"^delete/(?P<id>[0-9]+)", views.DeckAPIView.as_view(), name="delete_deck"),
     url(r"^views/(?P<id>[0-9]+)", views.DeckViewsAPIView.as_view(), name="increment_deck_views"),
+    url(r"^", include("card.urls")),
 ]

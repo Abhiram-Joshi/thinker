@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "account",
     "deck",
+    "card",
 ]
 
 REST_FRAMEWORK = {
