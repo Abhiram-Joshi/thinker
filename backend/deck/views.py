@@ -53,3 +53,14 @@ class DeckAPIView(APIView):
         response = response_writer("success", None, 200, "Deck deleted")
 
         return Response(response, status=status.HTTP_200_OK)
+
+class DeckViewsAPIView(APIView):
+
+    def post(self, request, id):
+        instance = Deck.objects.get(id=id)
+        instance.views += 1
+        instance.save()
+
+        response = response_writer("success", None, 200, "Views increased by 1")
+
+        return Response(response, status=status.HTTP_200_OK)
