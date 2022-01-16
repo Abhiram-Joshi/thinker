@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from utilities import get_model_fields, response_writer
 
-from .serializers import RefreshTokenSerializer, UserLoginSerializer
+from .serializers import RefreshTokenSerializer, UserLoginSerializer, UserUpdateSerializer
 from .utilities import generate_access_token, generate_refresh_token
 
 # Create your views here.
@@ -44,27 +44,25 @@ class UserAPIView(APIView):
     def patch(self, request):
         User = get_user_model()
 
-        serializer = UserLoginSerializer(data=request.data)
+        serializer = UserUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         uuid = request.user.uuid
 
-        if uuid == serializer.validated_data["uuid"]:
-            User.objects.filter(uuid=uuid).update_or_create(serializer.validated_data)
+        User.objects.filter(uuid=uuid).update_or_create(serializer.validated_data)
 
-            response = response_writer(
-                "success",
-                User.objects.filter(uuid=uuid).values(*get_model_fields(User)),
-                200,
-                "Updated",
-            )
-            return Response(response, status=status.HTTP_200_OK)
+        response = response_writer(
+            "success",
+            User.objects.filter(uuid=uuid).values(*get_model_fields(User)),
+            200,
+            "Updated",
+        )
+        return Response(response, status=status.HTTP_200_OK)
 
-        else:
-            response = response_writer(
-                "error", None, 401, "Cannot update details of other users"
-            )
-            return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+        response = response_writer(
+            "error", None, 401, "Cannot update details of other users"
+        )
+        return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
     def delete(self, request):
         User = get_user_model()

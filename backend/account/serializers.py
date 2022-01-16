@@ -7,6 +7,10 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     photo_url = serializers.URLField()
 
+class UserUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    bio = serializers.CharField()
+
 
 class RefreshTokenSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()

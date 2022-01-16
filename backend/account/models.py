@@ -10,6 +10,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     photo_url = models.URLField()
     uuid = models.UUIDField(unique=True, primary_key=True)
+    bio = models.CharField(max_length=255, blank=True)
     is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = "uuid"
