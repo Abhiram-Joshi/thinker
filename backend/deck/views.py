@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 
 from utilities import response_writer
 
@@ -95,4 +96,20 @@ class DeckViewsAPIView(APIView):
 
         response = response_writer("success", None, 200, "Views increased by 1")
 
+        return Response(response, status=status.HTTP_200_OK)
+
+class DeckCreatedListAPIView(ListAPIView):
+
+    serializer_class = DeckSerializer
+
+    def get_queryset(self):
+        return Deck.objects.filter(user=self.request.user)
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        response = response_writer(
+            "success", serializer.data, 200, "Decks retrieved"
+        )
         return Response(response, status=status.HTTP_200_OK)
