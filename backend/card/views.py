@@ -11,7 +11,8 @@ from utilities import response_writer
 # Create your views here.
 class CardsAPIView(APIView):
 
-    def get(self, request, deck_id):
+    def get(self, request):
+        deck_id = request.query_params.get('deck_id')
         cards = Card.objects.filter(deck = Deck.objects.get(id=deck_id)).values()
 
         if cards:
@@ -23,8 +24,10 @@ class CardsAPIView(APIView):
             return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
 
-    def post(self, request, deck_id):
-        serializer = CardSerializer(data=request.data)
+    def post(self, request):
+        deck_id = request.query_params.get('deck_id')
+        
+        serializer = CardSerializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
 
         serializer.save(deck=Deck.objects.get(id=deck_id))
@@ -37,7 +40,8 @@ class CardsAPIView(APIView):
 
 class CardsDeleteAPIView(APIView):
 
-    def delete(self, request, id):
+    def delete(self, request):
+        id = request.query_params.get('id')
         instance = Card.objects.get(id=id)
         instance.delete()
 
@@ -46,7 +50,8 @@ class CardsDeleteAPIView(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
     
-    def patch(self, request, id):
+    def patch(self, request):
+        id = request.query_params.get('id')
         instance = Card.objects.get(id=id)
 
         serializer = CardSerializer(instance, data=request.data)

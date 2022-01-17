@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import re_path
 from . import views
 
 urlpatterns = [
-    url(r"^(?P<deck_id>[0-9]+)/cards", views.CardsAPIView.as_view(), name="get_card_data"),
-    url(r"^cards/(?P<id>[0-9]+)", views.CardsDeleteAPIView.as_view(), name="get_card_data"),
+    re_path(r"^cards", views.CardsAPIView.as_view(), name="get_card_data"),
+    re_path(r"^card", views.CardsDeleteAPIView.as_view(), name="get_card_data"),
 ]
