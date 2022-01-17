@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from utilities import response_writer
 
 from .models import Deck
-from .serializers import DeckSerializer
+from .serializers import DeckSerializer, CreateDeckSerializer, UpdateDeckSerializer
 
 
 # Create your views here.
@@ -21,45 +21,77 @@ class TopicAPIView(APIView):
 
 
 class DeckAPIView(APIView):
+
+    def get(self, request):
+
+        deck = Deck.objects.filter(id=request.query_params.get("id")).first()
+        serializer = DeckSerializer(deck)
+
+        if deck.user != request.user:
+            deck.views+=1
+            deck.save()
+        
+        response = response_writer("success", serializer.data, 200, "Deck retrieved")
+
+        return Response(response, status=status.HTTP_200_OK)
+
     def post(self, request):
 
-        serializer = DeckSerializer(data=request.data)
+        serializer = CreateDeckSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
 
         response = response_writer(
-            "success", dict(serializer.validated_data), 200, "Deck created"
+            "success", serializer.validated_data, 200, "Deck created"
         )
         return Response(response, status=status.HTTP_200_OK)
 
-    def patch(self, request, id):
+    def patch(self, request):
 
-        instance = Deck.objects.get(id=id)
+        id = request.query_params.get("id")
+        deck = Deck.objects.get(id=id)
 
-        serializer = DeckSerializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        if deck.user == request.user:
+            serializer = UpdateDeckSerializer(deck, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        response = response_writer(
-            "success", dict(serializer.validated_data), 200, "Deck updated"
-        )
+            response = response_writer(
+                "success", serializer.validated_data, 200, "Deck updated"
+            )
+            return Response(response, status=status.HTTP_200_OK)
 
-        return Response(response, status=status.HTTP_200_OK)
+        else:
+            response = response_writer(
+                "error", None, 403, "You are not authorized to update this deck"
+            )
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
 
-    def delete(self, request, id):
+    def delete(self, request):
 
-        Deck.objects.get(id=id).delete()
+        id = request.query_params.get("id")
+        deck = Deck.objects.get(id=id)
 
-        response = response_writer("success", None, 200, "Deck deleted")
+        if deck.user == request.user:
+            deck.delete()
+            response = response_writer("success", None, 200, "Deck deleted")
+            return Response(response, status=status.HTTP_200_OK)
 
-        return Response(response, status=status.HTTP_200_OK)
+        else:
+            response = response_writer(
+                "error", None, 403, "You are not authorized to delete this deck"
+            )
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
+
 
 class DeckViewsAPIView(APIView):
 
-    def post(self, request, id):
-        instance = Deck.objects.get(id=id)
-        instance.views += 1
-        instance.save()
+    def post(self, request):
+
+        id = request.query_params.get("id")
+        deck = Deck.objects.get(id=id)
+        deck.bookmarks += 1
+        deck.save()
 
         response = response_writer("success", None, 200, "Views increased by 1")
 

@@ -3,8 +3,18 @@ from rest_framework import serializers
 from .models import Deck
 
 
-class DeckSerializer(serializers.ModelSerializer):
+class CreateDeckSerializer(serializers.ModelSerializer):
     class Meta:
         model = Deck
-        fields = "__all__"
-        read_only_fields = ["user", "views"]
+        exclude = ["user", "views", "reported", "created_at"]
+
+class UpdateDeckSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Deck
+        exclude = ["user", "views", "reported", "created_at", "topic", "wiki_url"]
+
+class DeckSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Deck
+        exclude = ["user", "reported"]

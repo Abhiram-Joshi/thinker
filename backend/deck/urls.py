@@ -1,12 +1,12 @@
-from django.conf.urls import url, include
+from django.urls import re_path, include
 
 from . import views
 
 urlpatterns = [
-    url(r"^get_topics", views.TopicAPIView.as_view(), name="get_all_deck_topics"),
-    url(r"^create", views.DeckAPIView.as_view(), name="create_deck"),
-    url(r"^update/(?P<id>[0-9]+)", views.DeckAPIView.as_view(), name="update_deck"),
-    url(r"^delete/(?P<id>[0-9]+)", views.DeckAPIView.as_view(), name="delete_deck"),
-    url(r"^views/(?P<id>[0-9]+)", views.DeckViewsAPIView.as_view(), name="increment_deck_views"),
-    url(r"^", include("card.urls")),
+    re_path(r"^get_topics", views.TopicAPIView.as_view(), name="get_all_deck_topics"),
+    re_path(r"^create", views.DeckAPIView.as_view(), name="create_deck"),
+    re_path(r"^update", views.DeckAPIView.as_view(), name="update_deck"),
+    re_path(r"^delete", views.DeckAPIView.as_view(), name="delete_deck"),
+    re_path(r"^get", views.DeckAPIView.as_view(), name="get_deck"),
+    re_path(r"^", include("card.urls")),
 ]
