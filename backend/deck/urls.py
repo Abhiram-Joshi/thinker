@@ -9,5 +9,7 @@ urlpatterns = [
     re_path(r"^delete", views.DeckAPIView.as_view(), name="delete_deck"),
     re_path(r"^get_created", views.DeckCreatedListAPIView.as_view(), name="get_all_decks"),
     re_path(r"^get", views.DeckAPIView.as_view(), name="get_deck"),
+    re_path(r"^bookmark", views.DeckBookmarkAPIView.as_view(), name="bookmark_deck"),
+    re_path(r"^remove_bookmark", views.DeckRemoveBookmarkAPIView.as_view(), name="remove_bookmark_deck"),
     re_path(r"^", include("card.urls")),
 ]

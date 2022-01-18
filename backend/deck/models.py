@@ -16,3 +16,4 @@ class Deck(models.Model):
     reported = models.BooleanField(default=False)
     bookmarks = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    bookmarked_by = models.ManyToManyField(User, related_name="bookmarked_by")

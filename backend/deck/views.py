@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView
 
 from utilities import response_writer
 
@@ -112,4 +112,52 @@ class DeckCreatedListAPIView(ListAPIView):
         response = response_writer(
             "success", serializer.data, 200, "Decks retrieved"
         )
+        return Response(response, status=status.HTTP_200_OK)
+
+class DeckBookmarkAPIView(UpdateAPIView):
+    serializer_class = DeckSerializer
+
+    def get_queryset(self):
+        return Deck.objects.filter(user=self.request.user)
+    
+    def get_object(self):
+        return Deck.objects.filter(id=self.request.query_params.get("id")).first()
+
+    def update(self, request, *args, **kwargs):
+        deck = self.get_object()
+
+        deck.bookmarked_by.add(request.user)
+        deck.bookmarks += 1
+        deck.save()
+
+        serializer = self.get_serializer(deck)
+
+        response = response_writer(
+            "success", serializer.data, 200, "Bookmark added"
+        )
+
+        return Response(response, status=status.HTTP_200_OK)
+
+class DeckRemoveBookmarkAPIView(UpdateAPIView):
+    serializer_class = DeckSerializer
+
+    def get_queryset(self):
+        return Deck.objects.filter(user=self.request.user)
+    
+    def get_object(self):
+        return Deck.objects.filter(id=self.request.query_params.get("id")).first()
+
+    def update(self, request, *args, **kwargs):
+        deck = self.get_object()
+
+        deck.bookmarked_by.remove(request.user)
+        deck.bookmarks -= 1
+        deck.save()
+
+        serializer = self.get_serializer(deck)
+
+        response = response_writer(
+            "success", serializer.data, 200, "Bookmark removed"
+        )
+
         return Response(response, status=status.HTTP_200_OK)
