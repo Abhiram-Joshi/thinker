@@ -26,7 +26,7 @@ class DeckAPIView(APIView):
     def get(self, request):
 
         deck = Deck.objects.filter(id=request.query_params.get("id")).first()
-        serializer = DeckSerializer(deck)
+        serializer = DeckSerializer(deck, context={'request': request})
 
         if deck.user != request.user:
             deck.views+=1
