@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.pagination import PageNumberPagination
 
 from utilities import response_writer
 
@@ -161,3 +162,30 @@ class DeckRemoveBookmarkAPIView(UpdateAPIView):
         )
 
         return Response(response, status=status.HTTP_200_OK)
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 15
+    page_size_query_param = 'page_size'
+
+class DeckHomeFeedListAPIView(ListAPIView):
+    serializer_class = DeckSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        return Deck.objects.filter(user=self.request.user).order_by('-views')
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+
+            return self.get_paginated_response(serializer.data)
+        
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            response = response_writer(
+                "success", serializer.data, 200, "Decks retrieved"
+            )
+
+            return Response(response, status=status.HTTP_200_OK)
