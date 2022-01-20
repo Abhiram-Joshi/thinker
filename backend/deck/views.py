@@ -172,7 +172,7 @@ class DeckHomeFeedListAPIView(ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        return Deck.objects.filter(user=self.request.user).order_by('-views')
+        return Deck.objects.filter(user=self.request.user).exclude(reported=True).order_by('-views')
 
     def list(self, request):
         queryset = self.get_queryset()
