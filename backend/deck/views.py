@@ -28,10 +28,6 @@ class DeckAPIView(APIView):
 
         deck = Deck.objects.filter(id=request.query_params.get("id")).first()
         serializer = DeckSerializer(deck, context={'request': request})
-
-        if deck.user != request.user:
-            deck.views+=1
-            deck.save()
         
         response = response_writer("success", serializer.data, 200, "Deck retrieved")
 
