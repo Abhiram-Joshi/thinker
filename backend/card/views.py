@@ -14,10 +14,10 @@ class CardsAPIView(APIView):
     def get(self, request):
         deck_id = request.query_params.get('deck_id')
         deck = Deck.objects.get(id=deck_id)
-        cards = Card.objects.filter(deck).values()
+        cards = Card.objects.filter(deck=deck).values()
 
         if cards:
-            if deck.user == request.user:
+            if deck.user != request.user:
                 deck.views += 1
                 deck.save()
             response = response_writer("success", cards, 200, "Cards retrieved")
