@@ -59,11 +59,6 @@ class UserAPIView(APIView):
         )
         return Response(response, status=status.HTTP_200_OK)
 
-        response = response_writer(
-            "error", None, 401, "Cannot update details of other users"
-        )
-        return Response(response, status=status.HTTP_401_UNAUTHORIZED)
-
     def delete(self, request):
         User = get_user_model()
 

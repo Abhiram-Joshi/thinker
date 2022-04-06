@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 
 from decouple import config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -91,14 +92,7 @@ WSGI_APPLICATION = "thinker.wsgi.application"
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "djongo",
-        "NAME": "thinker",
-        "ENFORCE_SCHEMA": False,
-        "CLIENT": {
-            "host": f"mongodb+srv://{config('MONGODB_USERNAME')}:{config('MONGODB_PASSWORD')}@thinker.jspmp.mongodb.net/test?authSource=admin&replicaSet=atlas-3ctehz-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
-        },
-    }
+    "default": dj_database_url.config(),
 }
 
 
