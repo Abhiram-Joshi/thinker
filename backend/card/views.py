@@ -14,6 +14,11 @@ class CardsAPIView(APIView):
     def get(self, request):
         deck_id = request.query_params.get('deck_id')
         deck = Deck.objects.get(id=deck_id)
+
+        if deck.private:
+            response = response_writer("error", None, 403, "Deck unavailable")
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
+
         cards = Card.objects.filter(deck=deck).values()
 
         if cards:

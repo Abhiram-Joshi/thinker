@@ -27,11 +27,16 @@ class DeckAPIView(APIView):
     def get(self, request):
 
         deck = Deck.objects.filter(id=request.query_params.get("id")).first()
-        serializer = DeckSerializer(deck, context={'request': request})
-        
-        response = response_writer("success", serializer.data, 200, "Deck retrieved")
 
-        return Response(response, status=status.HTTP_200_OK)
+        if deck.private:
+            serializer = DeckSerializer(deck, context={'request': request})
+            response = response_writer("success", serializer.data, 200, "Deck retrieved")
+
+            return Response(response, status=status.HTTP_200_OK)
+
+        else:
+            response = response_writer("error", None, 403, "Deck unavailable")
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
 
     def post(self, request):
 
@@ -185,7 +190,7 @@ class DeckHomeFeedListAPIView(ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        return Deck.objects.filter(user=self.request.user).exclude(reported=True).order_by('-views')
+        return Deck.objects.filter(user=self.request.user).exclude(reported=True).exclude(private=True).order_by('-views')
 
     def list(self, request):
         queryset = self.get_queryset()
