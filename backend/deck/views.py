@@ -123,17 +123,25 @@ class DeckBookmarkAPIView(UpdateAPIView):
     def update(self, request, *args, **kwargs):
         deck = self.get_object()
 
-        deck.bookmarked_by.add(request.user)
-        deck.bookmarks += 1
-        deck.save()
+        if request.user not in deck.bookmarked_by.all():
+            deck.bookmarked_by.add(request.user)
+            deck.bookmarks += 1
+            deck.save()
 
-        serializer = self.get_serializer(deck)
+            serializer = self.get_serializer(deck)
 
-        response = response_writer(
-            "success", serializer.data, 200, "Bookmark added"
-        )
+            response = response_writer(
+                "success", serializer.data, 200, "Bookmark added"
+            )
 
-        return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
+
+        else:
+            serializer = self.get_serializer(deck)
+
+            response = response_writer("success", serializer.data, 200, "Deck already bookmarked")
+
+            return Response(response, status=status.HTTP_200_OK)
 
 class DeckRemoveBookmarkAPIView(UpdateAPIView):
     serializer_class = DeckSerializer
@@ -147,17 +155,26 @@ class DeckRemoveBookmarkAPIView(UpdateAPIView):
     def update(self, request, *args, **kwargs):
         deck = self.get_object()
 
-        deck.bookmarked_by.remove(request.user)
-        deck.bookmarks -= 1
-        deck.save()
+        if request.user in deck.bookmarked_by.all():
+            deck.bookmarked_by.remove(request.user)
+            deck.bookmarks -= 1
+            deck.save()
 
-        serializer = self.get_serializer(deck)
+            serializer = self.get_serializer(deck)
 
-        response = response_writer(
-            "success", serializer.data, 200, "Bookmark removed"
-        )
+            response = response_writer(
+                "success", serializer.data, 200, "Bookmark removed"
+            )
 
-        return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
+
+        else:
+            serializer = self.get_serializer(deck)
+
+            response = response_writer("success", serializer.data, 200, "Deck not bookmarked")
+
+            return Response(response, status=status.HTTP_200_OK)
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 15
