@@ -180,6 +180,20 @@ class DeckRemoveBookmarkAPIView(UpdateAPIView):
 
             return Response(response, status=status.HTTP_200_OK)
 
+class GetBookmarkedDecksAPIView(ListAPIView):
+    serializer_class = DeckSerializer
+
+    def get_queryset(self):
+        return Deck.objects.filter(bookmarked_by=self.request.user).filter(private=False)
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        response = response_writer("success", serializer.data, 200, "Bookmarked Decks retrieved")
+
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 15
