@@ -13,5 +13,6 @@ urlpatterns = [
     re_path(r"^remove_bookmark/$", views.DeckRemoveBookmarkAPIView.as_view(), name="remove_bookmark_deck"),
     re_path(r"^get_bookmarked_decks/$", views.GetBookmarkedDecksAPIView.as_view(), name="get_bookmarked_decks"),
     re_path(r"^home_feed/$", views.DeckHomeFeedListAPIView.as_view(), name="get_home_feed_decks"),
+    re_path(r"^toggle_access/$", views.ToggleAccessAPIView.as_view(), name="toggle_access"),
     re_path(r"^$", include("card.urls")),
 ]

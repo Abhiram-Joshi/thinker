@@ -221,3 +221,24 @@ class DeckHomeFeedListAPIView(ListAPIView):
             )
 
             return Response(response, status=status.HTTP_200_OK)
+
+class ToggleAccessAPIView(UpdateAPIView):
+    serializer_class = DeckSerializer
+
+    def get_queryset(self):
+        return Deck.objects.filter(user=self.request.user)
+    
+    def get_object(self):
+        return Deck.objects.filter(id=self.request.query_params.get("id")).first()
+
+    def update(self, request, *args, **kwargs):
+        deck = self.get_object()
+
+        deck.private = not deck.private
+        deck.save()
+
+        serializer = self.get_serializer(deck)
+
+        response = response_writer("success", serializer.data, 200, "Access toggled")
+
+        return Response(response, status=status.HTTP_200_OK)
