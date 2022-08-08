@@ -1,2 +1,2 @@
 web: cd backend && gunicorn thinker.wsgi
-release: cd backend && python manage.py makemigrations && python manage.py makemigrations account && python manage.py makemigrations card && python manage.py makemigrations card && python manage.py migrate
+release: cd backend && python manage.py makemigrations && python manage.py makemigrations account && python manage.py makemigrations card && python manage.py makemigrations deck && python manage.py migrate
