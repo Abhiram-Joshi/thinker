@@ -8,7 +8,7 @@ def generate_access_token(uuid):
 
     payload = {
         "uuid": str(uuid),
-        "exp": datetime.datetime.now() + datetime.timedelta(minutes=30),
+        "exp": datetime.datetime.now() + datetime.timedelta(hours=2),
         "iat": datetime.datetime.now(),
     }
 
@@ -21,7 +21,7 @@ def generate_refresh_token(uuid):
 
     payload = {
         "uuid": str(uuid),
-        "exp": datetime.datetime.now() + datetime.timedelta(hours=1),
+        "exp": datetime.datetime.now() + datetime.timedelta(hours=5),
         "iat": datetime.datetime.now(),
     }
 
