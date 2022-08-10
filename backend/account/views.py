@@ -72,13 +72,13 @@ class RefreshTokenAPIView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        serializer = RefreshTokenSerializer(data=request.data)
+        serializer = RefreshTokenSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
         refresh_token = serializer.validated_data["refresh_token"]
 
         try:
-            payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithm="HS256")
+            payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms="HS256")
 
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Token expired")
