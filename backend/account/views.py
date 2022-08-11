@@ -41,6 +41,22 @@ class UserLoginAPIView(APIView):
 
 
 class UserAPIView(APIView):
+    def get(self, request):
+        User = get_user_model()
+
+        serializer = UserLoginSerializer(data=User.objects.filter(uuid=request.query_params["uuid"]).values()[0])
+        serializer.is_valid(raise_exception=True)
+
+        response = response_writer(
+            "success",
+            serializer.validated_data,
+            200,
+            "Retrieved",
+        )
+
+        return Response(response, status=status.HTTP_200_OK)
+
+
     def patch(self, request):
         User = get_user_model()
 
