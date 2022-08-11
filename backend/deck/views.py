@@ -30,7 +30,7 @@ class DeckAPIView(APIView):
 
         deck = Deck.objects.filter(id=request.query_params.get("id")).first()
 
-        if deck.private:
+        if not deck.private:
             serializer = DeckSerializer(deck, context={'request': request})
             response = response_writer("success", serializer.data, 200, "Deck retrieved")
 
