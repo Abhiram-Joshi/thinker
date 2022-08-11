@@ -44,10 +44,12 @@ class DeckAPIView(APIView):
 
         serializer = CreateDeckSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
+        instance = serializer.save(user=request.user)
+        response_data = dict(serializer.validated_data)
+        response_data.update({"id": instance.id})
 
         response = response_writer(
-            "success", serializer.validated_data, 200, "Deck created"
+            "success", response_data, 200, "Deck created"
         )
         return Response(response, status=status.HTTP_200_OK)
 
