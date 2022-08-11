@@ -18,7 +18,7 @@ class DeckSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Deck
-        exclude = ["user", "reported", "bookmarked_by",]
+        exclude = ["reported", "bookmarked_by",]
 
     def get_bookmarked(self, obj):
         if self.context.get('request').user in obj.bookmarked_by.all():
