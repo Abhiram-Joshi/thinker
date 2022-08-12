@@ -7,9 +7,11 @@ from rest_framework.pagination import PageNumberPagination
 import datetime
 
 from utilities import response_writer
+from card.models import Card
 
 from .models import Deck
 from .serializers import DeckSerializer, CreateDeckSerializer, UpdateDeckSerializer
+from .utilities import get_facts
 
 
 # Create your views here.
@@ -44,9 +46,12 @@ class DeckAPIView(APIView):
 
         serializer = CreateDeckSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        facts = get_facts(serializer.validated_data["topic"])
+
         instance = serializer.save(user=request.user)
         response_data = dict(serializer.validated_data)
-        response_data.update({"id": instance.id})
+        response_data.update({"id": instance.id, "facts": facts})
 
         response = response_writer(
             "success", response_data, 200, "Deck created"
