@@ -251,3 +251,35 @@ class ToggleAccessAPIView(UpdateAPIView):
         response = response_writer("success", serializer.data, 200, "Access toggled")
 
         return Response(response, status=status.HTTP_200_OK)
+
+class SearchResultsSetPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+
+class SearchDeckAPIView(ListAPIView):
+    serializer_class = DeckSerializer
+    pagination_class = SearchResultsSetPagination
+
+    def get_queryset(self):
+        return Deck.objects.filter(topic=self.request.query_params.get("topic")).exclude(reported=True).exclude(private=True).order_by("-created_at")
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+
+            return self.get_paginated_response(serializer.data)
+
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+
+            response = response_writer(
+                "success",
+                serializer.data,
+                200,
+                "Search results retrieved",
+            )
+
+            return Response(response, status=status.HTTP_200_OK)
