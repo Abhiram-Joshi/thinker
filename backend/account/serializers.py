@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 
 class UserLoginSerializer(serializers.Serializer):
-    uuid = serializers.UUIDField()
+    uuid = serializers.CharField()
     name = serializers.CharField()
     email = serializers.EmailField()
     photo_url = serializers.URLField()
