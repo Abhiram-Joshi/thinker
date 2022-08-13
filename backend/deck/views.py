@@ -261,7 +261,7 @@ class SearchDeckAPIView(ListAPIView):
     pagination_class = SearchResultsSetPagination
 
     def get_queryset(self):
-        return Deck.objects.filter(topic=self.request.query_params.get("topic")).exclude(reported=True).exclude(private=True).order_by("-created_at")
+        return Deck.objects.filter(topic__iexact=self.request.query_params.get("topic")).exclude(reported=True).exclude(private=True).order_by("-created_at")
 
     def list(self, request):
         queryset = self.get_queryset()
