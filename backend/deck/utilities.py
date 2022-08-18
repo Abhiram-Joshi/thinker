@@ -22,3 +22,7 @@ def get_facts(topic: str) -> list:
     except wikipedia.exceptions.DisambiguationError as e:
         print(e)
         return None
+
+    except Exception as e:
+        print(e)
+        return None

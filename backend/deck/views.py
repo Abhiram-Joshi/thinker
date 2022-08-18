@@ -49,14 +49,25 @@ class DeckAPIView(APIView):
 
         facts = get_facts(serializer.validated_data["topic"])
 
-        instance = serializer.save(user=request.user)
-        response_data = dict(serializer.validated_data)
-        response_data.update({"id": instance.id, "facts": facts})
+        if facts:
+            instance = serializer.save(user=request.user)
+            response_data = dict(serializer.validated_data)
+            response_data.update({"id": instance.id, "facts": facts})
 
-        response = response_writer(
-            "success", response_data, 200, "Deck created"
-        )
-        return Response(response, status=status.HTTP_200_OK)
+            response = response_writer(
+                "success", response_data, 200, "Deck created"
+            )
+            return Response(response, status=status.HTTP_200_OK)
+        
+        else:
+            response = response_writer(
+                "error",
+                None,
+                404,
+                "Data for cards not found",
+            )
+
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
 
     def patch(self, request):
 
