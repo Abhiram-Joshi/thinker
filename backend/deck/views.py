@@ -8,6 +8,7 @@ import datetime
 
 from utilities import response_writer
 from card.models import Card
+from card.serializers import CardSerializer
 
 from .models import Deck
 from .serializers import DeckSerializer, CreateDeckSerializer, UpdateDeckSerializer
@@ -44,30 +45,20 @@ class DeckAPIView(APIView):
 
     def post(self, request):
 
-        serializer = CreateDeckSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        deck_serializer = CreateDeckSerializer(data=request.data)
+        deck_serializer.is_valid(raise_exception=True)
+        deck = deck_serializer.save(user=request.user)
+        print(deck)
 
-        facts = get_facts(serializer.validated_data["topic"])
+        card_serializer = CardSerializer(data=request.data.get("cards"), many=True)
+        card_serializer.is_valid(raise_exception=True)
+        card_serializer.save(deck=deck)
 
-        if facts:
-            instance = serializer.save(user=request.user)
-            response_data = dict(serializer.validated_data)
-            response_data.update({"id": instance.id, "facts": facts})
+        response = response_writer("success", deck.id, 200, "Deck created with cards")
 
-            response = response_writer(
-                "success", response_data, 200, "Deck created"
-            )
-            return Response(response, status=status.HTTP_200_OK)
-        
-        else:
-            response = response_writer(
-                "error",
-                None,
-                404,
-                "Data for cards not found",
-            )
+        return Response(response, status=status.HTTP_200_OK)
 
-            return Response(response, status=status.HTTP_404_NOT_FOUND)
+
 
     def patch(self, request):
 
