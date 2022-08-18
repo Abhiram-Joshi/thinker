@@ -294,3 +294,20 @@ class SearchDeckAPIView(ListAPIView):
             )
 
             return Response(response, status=status.HTTP_200_OK)
+
+class GetCardsData(APIView):
+    
+    def get(self, request):
+        topic = request.query_params["topic"]
+
+        facts = get_facts(topic)
+
+        if facts:
+            response = response_writer("success", facts, 200, "Cards data returned successfully")
+
+            return Response(response, status=status.HTTP_200_OK)
+        
+        else:
+            response = response_writer("success", None, 404, "Card data not found")
+
+            return Response(response, status=status.HTTP_404_NOT_FOUND)

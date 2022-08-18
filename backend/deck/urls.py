@@ -15,5 +15,6 @@ urlpatterns = [
     re_path(r"^home_feed/$", views.DeckHomeFeedListAPIView.as_view(), name="get_home_feed_decks"),
     re_path(r"^toggle_access/$", views.ToggleAccessAPIView.as_view(), name="toggle_access"),
     re_path(r"^search/$", views.SearchDeckAPIView.as_view(), name="search_decks"),
+    re_path(r"get_card_data/$", views.GetCardsData.as_view(), name="get_cards_data"),
     re_path(r"^", include("card.urls")),
 ]
