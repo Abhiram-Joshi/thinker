@@ -215,7 +215,7 @@ class DeckHomeFeedListAPIView(ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        return Deck.objects.exclude(user=self.request.user).filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=2)).exclude(reported=True).exclude(private=True).order_by('-views')
+        return Deck.objects.exclude(user=self.request.user).filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=20)).exclude(reported=True).exclude(private=True).order_by('-views')
 
     def list(self, request):
         queryset = self.get_queryset()
