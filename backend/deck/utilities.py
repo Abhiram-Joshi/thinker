@@ -11,9 +11,9 @@ def get_facts(topic: str) -> list:
         summary = wikipedia.summary(valid_topic, sentences=50)
 
         summary_wo_headings = re.sub(r"==.*==", "", summary)
-        summary_wo_blanks = re.sub(r"\n", "", summary_wo_headings)
+        summary_wo_blanks = re.sub(r"\n", " ", summary_wo_headings)
         
-        facts = summary.split(". ")
+        facts = summary_wo_blanks.split(". ")
 
         random_indices = [random.randint(0, len(facts)-1) for i in range(5)]
 
