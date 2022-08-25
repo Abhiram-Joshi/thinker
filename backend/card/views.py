@@ -20,6 +20,11 @@ class CardsAPIView(APIView):
             return Response(response, status=status.HTTP_403_FORBIDDEN)
 
         cards = Card.objects.filter(deck=deck).values()
+        for card in cards:
+            card.update({
+                "name": deck.user.name,
+                "uuid": deck.user.uuid
+            })
 
         if cards:
             if deck.user != request.user:
