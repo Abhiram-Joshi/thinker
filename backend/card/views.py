@@ -23,7 +23,8 @@ class CardsAPIView(APIView):
         for card in cards:
             card.update({
                 "name": deck.user.name,
-                "uuid": deck.user.uuid
+                "uuid": deck.user.uuid,
+                "photo_url": deck.user.photo_url,
             })
 
         if cards:
